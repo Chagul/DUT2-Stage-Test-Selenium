@@ -1,0 +1,8 @@
+settings.json
+.vscode
+.env
+*__pycache__*
+*__pycache__/*
+geckodriver.log
+*ResultatTest/*
+*.html*

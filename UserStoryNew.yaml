@@ -1,0 +1,673 @@
+aliases:
+  EtatInitial1: &DeptCreated Le département est créé
+  EtatInitial2: &ProgramCreated Le programme est créé
+  EtatInitial3: &MatiereCreated Les matières sont créées
+  EtatInitial4: &EtudiantCreated Un etudiant dans chaque semestre est créé
+  Role1: &Admin Admin
+  Role2: &Secretaire Secretaire
+  Role3: &Prof Professeur
+  Role4: &AdminDPT AdminDepartement
+  Role5: &Testeur Testeur
+  Page1: &Accueil Accueil
+  Page2: &Absence Absence
+  Page3: &Departement Departement
+  Page4: &Notes Notes
+  Page5: &Connexion Connexion
+  Page6: &ConnexionAdmin ConnexionAdmin
+  Page7: &Scolarite Scolarite
+  Page8: &FicheEtu FicheEtudiant
+test1:
+  intitulé: "Connexion en admin"
+  operation: Acceder à la page scodoc_admin avec les identifiants admin;
+  resultat: Connexion établie (h3 = page Administration de scodoc)
+  etat: *DeptCreated
+  page: *Connexion
+  champsModifie: none
+  champsInteractions: none
+  role: *Admin
+  createur: Aurélien
+test2:
+  intitulé: Création d'un département
+  operation: Accès à la page scodoc_admin,
+    séléctionner un département dans création département,
+    clicker sur créer département,
+    valider sur la page suivante
+  resultat: Apparition du lien du département sur la page d'accueil
+  etat: *DeptCreated
+  page: *ConnexionAdmin
+  champsModifie: null
+  champsInteractions: null
+  role: *Admin
+  createur: Aurélien
+test3:
+  intitulé: Suppression d'un département
+  operation: Accès à la page scodoc_admin,
+    séléctionner un département dans suppresion département,
+    clicker sur supprimer et valider
+  resultat: Disparition du lien du département sur la page d'accueil
+  etat: *DeptCreated
+  page: *ConnexionAdmin
+  champsModifie: null
+  champsInteractions: DeleteDept
+  role: *Admin
+  createur: Aurélien
+test4:
+  intitulé: Création d'une formation
+  operation: Accès à la page ScoDoc/[nom_dpt]/Scolarite/Notes/formation_create,
+    Remplir et soumettre le formulaire
+  resultat: la page sur laquelle on est dirigée contient un tableau avec la formation crée, dont un id avec titre_nom_formation
+  etat: *DeptCreated
+  page: *Notes
+  champsModifie: acronyme
+  champsInteractions:
+    [
+      ProgrammesLink,
+      link-create-formation,
+      tf_acronyme,
+      tf_titre,
+      tf_titre_officiel,
+      tf_submit,
+    ]
+  role: *AdminDPT
+  createur: Aurélien
+test5:
+  intitulé: Changer le nom d'une formation
+  operation: Accès à la page /ScoDoc/[nom_dpt]/Scolarite/Notes
+    Selectionner la formation à modifier en clickant sur son titre
+    Remplir et soumettre le formulaire
+  resultat: la page sur laquelle on est dirigée contient une class formation_descr
+  etat: *DeptCreated
+  page: *Notes
+  champsModifie: acronyme
+  champsInteractions: [edit_Formation, tf_acronyme, tf_submit]
+  role: *AdminDPT
+  createur: Aurélien
+test6:
+  intitulé: Création d'une formation avec le même nom qu'une autre
+  operation: Accès à la page ScoDoc/[nom_dpt]/Scolarite/Notes/formation_create,
+    Remplir et soumettre le formulaire
+  resultat: la page sur laquelle on est dirigée contient un message d'erreur indiquant que le nom est dupliqué, la formation n'est pas créée
+  etat: *DeptCreated
+  page: *Notes
+  champsModifie:
+  champsInteractions:
+    [
+      tf_titre,
+      tf_acronyme,
+      tf_submit,
+      tf_titre_officiel,
+      link-create-formation,
+      errorMessage,
+    ]
+  role: *AdminDPT
+  createur: Aurélien
+test7:
+  intitulé: Ajout d'un semestre à la formation créée
+  operation:
+    Accès à la page récapitulative des formations créées, clicker sur ajouter semestre
+    Remplir et soumettre le formulaire
+    Soumettre le formulaire;
+  resultat: La page sur laquelle on est dirigée contient "Nouveau semestre créé " et
+  etat: *DeptCreated
+  page: *Notes
+  champsModifie:
+  champsInteractions:
+    [
+      tf_titre,
+      tf_acronyme,
+      tf_submit,
+      tf_titre_officiel,
+      link-create-formation,
+      errorMessage,
+    ]
+  role: *AdminDPT
+  createur: Aurélien
+test8:
+  intitulé: Suppresion d'une formation
+  operation: Accès à la page ScoDoc/[nom_dpt]/Scolarite/Notes/,
+    Supprimer chaque semestre qui compose cette formation,
+    Supprimer  la formation
+  resultat: La formation disparait du tableau des formations, le bouton delete_Formation disparait de la page
+  etat: *DeptCreated
+  page: *Notes
+  champsModifie: delete_formation
+  champsInteractions: [delete_Formation, tf_submit]
+  role: *AdminDPT
+  createur: Aurélien
+test9:
+  intitulé: Creer un étudiant
+  operation: Scolarite/etudident_create_form
+    Remplir les champs et soumettre le formulaire
+  resultat: La page contient ficheEtud avec un h2 contenant M. Normal UnEtudiant
+  etat: *ProgramCreated
+  page: *Scolarite
+  champsModifie: null
+  champsInteractions:
+    [
+      link-create-student,
+      tf_nom,
+      tf_prenom,
+      tf_annee,
+      tf_code_nip,
+      dont_check_homonyms:list,
+      tf_submit,
+    ]
+  role: *AdminDPT
+  createur: Aurélien
+test10:
+  intitulé: Creer un étudiant avec le même nip qu'un autre
+  operation: Scolarite/etudident_create_form
+    Remplir les champs et utiliser le même NIP qu'un autre étudiant et soumettre le formulaire
+  resultat: Redirection vers une page contenant COde étudiant dupliqué, l'étudiant n'est pas créé
+  etat: *ProgramCreated
+  page: *Scolarite
+  champsModifie: null
+  champsInteractions:
+    [
+      tf_nom,
+      tf_prenom,
+      tf_annee,
+      tf_code_nip,
+      dont_check_homonyms:list,
+      tf_submit,
+      title-error,
+    ]
+  role: [*AdminDPT, *Secretaire]
+  createur: Aurélien
+test11:
+  intitulé: Modifier l'adresse d'un étudiant
+  operation:
+    Se rendre sur la fiche étudiante d'un étudiant avec l'aide de la recherche à l'id in-expnom(sidebar)
+    Clicker sur changer de coordonnées
+    Remplir le formulaire et le soumestre
+  resultat: L'élèment à l'id student-adress contient désormais les informations mise à jour.
+  etat: *ProgramCreated
+  page: *Scolarite
+  champsModifie: student-adress
+  champsInteractions:
+    [in-expnom, tf_domicile, tf_codepostaldomicile, tf_paysdomicile, tf_submit]
+  role: [*AdminDPT, *Secretaire]
+  createur: Aurélien
+test12:
+  intitulé: Inscrire un étudiant à un semestre
+  operation: Rechercher l'étudiant et l'inscrire au semestre courant
+  resultat: La fiche etu de l'étudiant contient maintenant le semestre courant
+  etat: *ProgramCreated
+  page: *Scolarite
+  champsModifie: null
+  champsInteractions:
+    [in-expnom, url_inscription_with_modules, inscription-semestre-]
+  role: *Secretaire
+  createur: Aurélien
+test13:
+  intitulé: Supprimer un étudiant
+  operation: Chercher l'étudiant, et utiliser le formulaire etudident_delete?etudid= en ajoutant l'euid de cette étudfiant
+  resultat: Cette étudiant est supprimé, aucun résultat n'apparait avec une recherche sur son nom
+  etat: *EtudiantCreated
+  page: *FicheEtu
+  champsModifie: null
+  champsInteractions: [expnom, euid]
+  role: [*AdminDPT, *Secretaire]
+  createur: Aurélien
+test14:
+  intitulé: Trouver un étudiant
+  operation: Utiliser la barre latéral pour entrer le nom de l'étudiant
+  resultat: Redirection vers la fiche de l'étudiant en question
+  etat: *EtudiantCreated
+  page: *Absence
+  champsModifie: null
+  champsInteractions: expnom
+  role: [*AdminDPT, *Secretaire]
+  createur: Aurélien
+test15:
+  intitulé: Creer une absence non justifiée
+  operation: Affecter une absence à un étudiant depuis sa fiche étudiant, et utiliser 'Ajouter' dans la barre latérale
+  resultat: La page absence de cet étudiant contient l'absence créée
+  etat: *EtudiantCreated
+  page: *Absence
+  champsModifie: null
+  champsInteractions: [ajout_Absence, datedebut, butsubmit]
+  role: *Secretaire
+  createur: Aurélien
+test16:
+  intitulé: Creer une absence justifiée
+  operation: Affecter une absence à un étudiant depuis sa fiche étudiant, et utiliser 'Ajouter' dans la barre latérale, cocher est justifiée
+  resultat: La page absence de cet étudiant contient l'absence créée
+  etat: *EtudiantCreated
+  page: *Absence
+  champsModifie: null
+  champsInteractions: [ajout_Absnece, datedebut, estjust, butsubmit]
+  role: *Secretaire
+  createur: Aurélien
+test17:
+  intitulé: Justifier une absence
+  operation: Justifier une absence et la confirmer
+  resultat: Ces absences apparaissent comme justifiée sur la page des absences de cet étudiant
+  etat: *EtudiantCreated
+  page: *Absence
+  champsModifie: null
+  champsInteractions: [justify-absence, datedebut, description]
+  role: *Secretaire
+  createur: Aurélien
+test18:
+  intitulé: Supprimer une absence
+  operation: Supprimer une absence d'un étudiant depuis sa fiche étudiant, et utiliser 'Supprimer' dans la barre latérale, remplir le formulaire avec les dates des absences à justifier
+  resultat: Ces absences apparaissent comme justifiée sur la page des absences de cet étudiant
+  etat: *EtudiantCreated
+  page: *Absence
+  champsModifie: null
+  champsInteractions: [delete-absence, datedebut, display-list-absence]
+  role: *Secretaire
+  createur: Aurélien
+test19:
+  intitulé: Vérifier qu'il y a un semestre en cours
+  operation: Se rendre sur le semestre en cours correspondant depuis /Scolarité , controler si la matière en question est presente dans la liste des matières
+  resultat: La semestre est présente sur l'accueil des formations
+  etat: *MatiereCreated
+  page: *Scolarite
+  champsModifie: null
+  champsInteractions: [listesems]
+  role: *Testeur
+  createur: Aurélien
+test20:
+  intitulé: Vérifier qu'une matière existe
+  operation: Se rendre sur le semestre en cours correspondant depuis /Scolarité , controler si la matière en question est presente dans la liste des matières
+  resultat: La matière est présente
+  etat: *MatiereCreated
+  page: *Scolarite
+  champsModifie: null
+  champsInteractions: [formsemestre_status_ue]
+  role: *Testeur
+  createur: Aurélien
+test21:
+  intitulé: Changement du résponsable sur un module
+  operation: Se rendre sur la matière de notre choix, changer le responsable sur cette page
+  resultat: Le résponsable apparait désormais en haut de la matière
+  etat: *MatiereCreated
+  page: *Notes
+  champsModifie: ens_Responsable
+  champsInteractions: [link_edit_moduleimpl_resp, responsable_id, tf_submit]
+  role: *AdminDPT
+  createur: Aurélien
+test22:
+  intitulé: Ajouter un enseignant sur un module
+  operation: Se rendre sur la matière de notre choix, clicker sur ajouter un enseignant, remplir le formulaire en recherchant l'enseignant voulu
+  resultat: Le nom de l'enseignant apparait désormais lorsqu'on se rends sur cette matière à coté d'"enseignants"
+  etat: *MatiereCreated
+  page: *Notes
+  champsModifie: ens_Dans_Module
+  champsInteractions: [ens_id, tf_submit]
+  role: *AdminDPT
+  createur: Aurélien
+test23:
+  intitulé: Créer une interrogation
+  operation: Se rendre sur la matière de notre choix, ajouter une interogation, remplir le formulaire et le soumettre
+  resultat: L'interrogation apparait désormais dans le tableau récapitulatif de cette matière
+  etat: *MatiereCreated
+  page: *Notes
+  champsModifie: null
+  champsInteractions: [tf_description, tf_coefficient, tf_submit]
+  role: [*AdminDPT, *Prof]
+  createur: Aurélien
+test24:
+  intitulé: Verifier l'existance d'une interrogation
+  operation: Se rendre sur la matière de notre choix, verifier que "Module" est présent
+  resultat: Module est présent dans formsemestre
+  etat: *MatiereCreated
+  page: *Notes
+  champsModifie: null
+  champsInteractions: [formsemestre]
+  role: *Prof
+  createur: Aurélien
+test25:
+  intitulé: Entrer des notes pour une partie des élèves
+  operation: Se rendre sur la matière de notre choix, selectionner une interogation et entrer les notes pour une partie des élèves
+  resultat: ATT apparait désormais à coté de l'interrogation en question sur la page de la matières concernée
+  etat: *MatiereCreated
+  page: *Notes
+  champsModifie: null
+  champsInteractions: [notes_img, note, formnotes_submit]
+  role: *Prof
+  createur: Aurélien
+test26:
+  intitulé: Entrer des notes pour tout les élèves
+  operation: Se rendre sur la matière de notre choix, selectionner une interogation et entrer les notes pour chaque élève
+  resultat: La moyenne apparait désormais directement à côté de l'interrogation en question, les notes apparaissent dans le bulletin des élèves concernés
+  etat: *MatiereCreated
+  page: *Notes
+  champsModifie: null
+  champsInteractions: [notes_img, note, formnotes_submit]
+  role: *Prof
+  createur: Aurélien
+test27:
+  intitulé: Supprimer la note d'un étudiant
+  operation: Se rendre sur la matière de notre choix, selectionner une interogation et entrer "SUPPR" pour l'étudiant voulu
+  resultat: La moyenne n'apparait plus sur la page des matières, la note est supprimée de la fiche de l'étudiant concerné
+  etat: *MatiereCreated
+  page: *Notes
+  champsModifie: null
+  champsInteractions: [notes_img, note, formnotes_submit]
+  role: *Prof
+  createur: Aurélien
+test28:
+  intitulé: Supprimer une interrogation
+  operation: Se rendre sur la matière de notre choix, selectionner une interogation la supprimer
+  resultat: Cette interrogation n'apparait plus dans la liste des interrogations de cette matière.
+  etat: *MatiereCreated
+  page: *Notes
+  champsModifie: null
+  champsInteractions: [delete_img, note, formnotes_submit]
+  role: *Prof
+  createur: Aurélien
+test29:
+  intitulé: Supprimer un enseignant du module
+  operation: Se rendre sur la matière de notre choix, selectionner modifier les enseignants et supprimer le professeur voulu
+  resultat: Cette interrogation n'apparait plus dans la liste des interrogations de cette matière.
+  etat: *MatiereCreated
+  page: *Notes
+  champsModifie: null
+  champsInteractions: [text:modifier les enseignants, text:supprimer]
+  role: *Prof
+  createur: Aurélien
+test30:
+  intitulé: Supprimer toutess les interrogations d'un module
+  operation: Se rendre sur la matière de notre choix, supprimer toute les interrogations
+  resultat: La liste des interrogation est vide
+  etat: *MatiereCreated
+  page: *Notes
+  champsModifie: [link:evaluation_delete]
+  champsInteractions: [tf_submit]
+  role: *Prof
+  createur: Aurélien
+test31:
+  intitulé: Ajouter deux notes identiques pour deux étudiant differents dans une même UE
+  operation: Se rendre sur la matière de notre choix, selectionner une interogation et entrer la note pour deux élèves
+  resultat: La moyenne apparait désormais directement à côté de l'interogation en question, la note apparait en tant que moyenne sur la fiche des étudiants
+  etat: *MatiereCreated
+  page: [*Notes]
+  champsModifie: [id:ue_]
+  champsInteractions: [class:status_ue_acro, link:saisie_notes, tf_submit]
+  role: *Prof
+  createur: Aurélien
+test32:
+  intitulé: Ajouter deux notes identiques pour deux étudiant differents dans un autre UE
+  operation: Se rendre sur la matière de notre choix, selectionner une interogation et entrer la note pour deux élèves
+  resultat: La moyenne apparait désormais directement à côté de l'interogation en question, la note apparait en tant que moyenne de cet UE sur la fiche des étudiants
+  etat: *MatiereCreated
+  page: [*Notes]
+  champsModifie: [id:ue_]
+  champsInteractions: [class:status_ue_acro, link:saisie_notes, id:in-expnom]
+  role: *Prof
+  createur: Aurélien
+test33:
+  intitulé: Vérifier le calcul de la moyenne générale
+  operation: Se rendre sur la fiche étudiant et vérifier que la moyenne corresponds à la somme des moyennes d'UE X leur coefficient
+  resultat: La moyenne correspond au calcul précédent
+  etat: *MatiereCreated
+  page: [*Notes]
+  champsModifie: [class:rcp_moy]
+  champsInteractions: [id:in-expnom]
+  role: *Prof
+  createur: Aurélien
+test34:
+  intitulé: Modifier le coefficient d'une UE
+  operation: Se rendre dans le programme et modifier le coefficient d'un module
+  resultat: La moyenne générale prends en compte le nouveau coefficient
+  etat: *MatiereCreated
+  page: [*Notes]
+  champsModifie: [class:rcp_moy]
+  champsInteractions:
+    [
+      id:in-expnom,
+      id:ProgrammesLink,
+      id:titre-,
+      id:tf_coefficient,
+      id:tf_submit,
+    ]
+  role: *Prof
+  createur: Aurélien
+test35:
+  intitulé: Ajouter une note bonus et une note malus
+  operation: Se rendre sur le semestre correspondant, chercher le module et créer une interrogation bonus, entre un bonus pour un élève et un malus pour l'autre
+  resultat: La moyenne de cet UE est directement incrémentée ou décrémentée avec le bonus (pas de coeff), la moyenne est modifiée est conséquence
+  etat: *MatiereCreated
+  page: [*Notes]
+  champsModifie: [class:rcp_moy]
+  champsInteractions:
+    [
+      id:in-expnom,
+      text:Créer nouvelle évaluation,
+      name:jour,
+      id:tf_description,
+      id_tf_submit,
+      link:saisie_notes,
+      id:formnotes_submit,
+      id:tf_submit,
+    ]
+  role: *Prof
+  createur: Aurélien
+test36:
+  intitulé: Ajouter une note en attente (ATT)
+  operation: Se rendre sur la matière de notre choix, selectionner une interogation et entrer "ATT" pour l'élève voulu
+  resultat: La moyenne pour l'UE de l'interogation choisie disparait de la fiche étudiant, les autres étudiant ne sont pas impactés, le calcul de la moyenne prends en compte cet ATT
+  etat: *EtudiantCreated
+  page: [*Notes]
+  champsModifie: [class:rcp_moy, class:ue_accro]
+  champsInteractions: [id:in-expnom]
+  role: *Prof
+  createur: Aurélien
+test37:
+  intitulé: Ajouter une note en absence (ABS)
+  operation: Se rendre sur la matière de notre choix, selectionner une interogation et entrer "ABS" pour l'élève voulu
+  resultat: La moyenne pour l'UE de l'interogation choisie prends en compte le 0 de l'étudiant concerné, les autres étudiant ne sont pas impactés, le calcul de la moyenne prends en compte cet ABS
+  etat: *EtudiantCreated
+  page: [*Notes]
+  champsModifie: [class:rcp_moy, class:ue_accro]
+  champsInteractions: [id:in-expnom]
+  role: *Prof
+  createur: Aurélien
+test38:
+  intitulé: Ajouter une note en excusé (EXC)
+  operation: Se rendre sur la matière de notre choix, selectionner une interogation et entrer "EXC" pour l'élève voulu
+  resultat: La moyenne pour l'UE de l'interogation choisie disparait de la fiche étudiant, les autres étudiant ne sont pas impactés, le calcul de la moyenne prends en compte cet ATT
+  etat: *EtudiantCreated
+  page: [*Notes]
+  champsModifie: [class:rcp_moy, class:ue_accro]
+  champsInteractions: [id:in-expnom]
+  role: *Prof
+  createur: Aurélien
+test39:
+  intitulé: Ajouter une matière bonus
+  operation:
+  resultat:
+  etat: *EtudiantCreated
+  page: [*Notes]
+  champsModifie: [class:rcp_moy, class:ue_accro]
+  champsInteractions: [id:in-expnom]
+  role: *Prof
+  createur: Aurélien
+test40:
+  intitulé: Saisir la décision de jury admis pour un etudiant ayant la moyenne et assidu
+  operation: Se rendre sur la fiche de l'étudiant, aller dans saisir la décision de jury, choisir l'option eleve assidu
+  resultat: ADM apparait dans sa fiche étudiant
+  etat: *EtudiantCreated
+  page: [*Notes]
+  champsModifie: [id:rcp_dec]
+  champsInteractions: [id:in-expnom, id:subut]
+  role: *Prof
+  createur: Aurélien
+test41:
+  intitulé: Saisir la décision de jury admis pour un etudiant n'ayant pas la moyenne dans ses semestres et non assidu
+  operation: Se rendre sur la fiche de l'étudiant, aller dans saisir la décision de jury, choisir l'option eleve non assidu
+  resultat: ATJ apparait dans sa fiche étudiant
+  etat: *EtudiantCreated
+  page: [*Notes]
+  champsModifie: [id:rcp_dec]
+  champsInteractions: [id:in-expnom, id:subut]
+  role: *Prof
+  createur: Aurélien
+test42:
+  intitulé: Saisir la décision de jury admis pour un etudiant n'ayant pas la moyenne dans ses semestres et assidu
+  operation: Se rendre sur la fiche de l'étudiant, aller dans saisir la décision de jury, choisir l'option eleve assidu
+  resultat: ATB apparait dans sa fiche étudiant
+  etat: *EtudiantCreated
+  page: [*Notes]
+  champsModifie: [id:rcp_dec]
+  champsInteractions: [id:in-expnom, id:subut]
+  role: *Prof
+  createur: Aurélien
+test43:
+  intitulé: Saisir la décision de jury admis pour un etudiant n'ayant pas la moyenne dans ses semestres et non assidu mais validé
+  operation: Se rendre sur la fiche de l'étudiant, aller dans saisir la décision de jury, choisir l'option decision remise a plus tard
+  resultat: ATB apparait dans sa fiche étudiant
+  etat: *EtudiantCreated
+  page: [*Notes]
+  champsModifie: [id:rcp_dec]
+  champsInteractions: [id:in-expnom, id:subut]
+  role: *Prof
+  createur: Aurélien*
+test44:
+  intitulé: Saisir les décision de jury automatiquement pour deux élèves, tout les deux assidus, un avec la moyenne et un sans
+  operation: Se rendre sur le semestre concerné, clicker sur jury et valider le formulaire, vérifier sur la page des deux étudiants
+  resultat: ADM apparait sur la fiche de l'étudiant ayant la moyenne, celle de celui qui n'as pas la moyenne n'est pas modifiée
+  etat: *EtudiantCreated
+  page: [*Notes]
+  champsModifie: [id:rcp_dec]
+  champsInteractions:
+    [
+      text:semestre 2,
+      text:Jury,
+      link:formsemestre_reacapcomplet,
+      link:formsemestre_validation_auto,
+      id:in-expnom,
+      id:subut,
+    ]
+  role: *Prof
+  createur: Aurélien
+test45:
+  intitulé: Déclarer une défaillance
+  operation: Se rendre sur la fiche d'un étudiant et le déclarer défaillant
+  resultat: Défaillant apparait désormais sur sa fiche
+  etat: *EtudiantCreated
+  page: [*Notes]
+  champsModifie: []
+  champsInteractions:
+    [id:in-expnom, text:Scolarité, link:formDef, name:event_date]
+  role: *Prof
+  createur: Aurélien
+test46:
+  intitulé: Déclarer une démission
+  operation: Se rendre sur la fiche d'un étudiant et le déclarer démissionnaire
+  resultat: Démission le xx apparait désormais sur sa fiche
+  etat: *EtudiantCreated
+  page: [*Notes]
+  champsModifie: []
+  champsInteractions:
+    [id:in-expnom, text:Scolarité, link:formDef, name:event_date]
+  role: *Prof
+  createur: Aurélien
+test47:
+  intitulé: Ajouter une session
+  operation: Verifier que la liste de formation est présente
+    Se rendre sur la page correspondante "Mise en place d'un semestre de formation" à la formation
+    Vérifier que grtcontent  h2 existe et qu'il contient "Mise en place d'un semestre de formation""
+    Soumettre le formulaire après l'avoir rempli
+  resultat: La page sur laquelle on est dirigée contient une classe head_message avec nouveau semestre créé
+  etat: *ProgramCreated
+  page: *Notes
+  champs:
+  role: *AdminDPT
+  createur: Aurélien
+test48:
+  intitulé: Ajout d'une UE à la formation créée
+  operation:
+    Accès à la page de création d'UE dans la formation précédemment créée
+    Remplir et soumettre le formulaire
+    Soumettre le formulaire;
+  resultat: Le nom et l'accronyme de l'UE sont dans la page de la formation
+  etat: *DeptCreated
+  page: *Notes
+  champsModifie: null
+  champsInteractions:
+    [id:tf_titre, id:tf_acronyme, id:tf_submit, link:ue_create]
+  role: *AdminDPT
+  createur: Aurélien
+test49:
+  intitulé: Ajout d'une matière à la formation créée
+  operation: Soumettre le formulaire d'ajout de matière
+  resultat: La page sur laquelle on est dirigée contient la classe notes_matiere_list et l'intitulé de la matière est présent
+  etat: *MatiereCreated
+  page: *Notes
+  champsModifie: null
+  champsInteractions: [
+      id:tf_titre,
+      id:tf_acronyme,
+      id:tf_submit,
+      link:matiere_create
+      link:matiere_edit,
+    ]
+  role: *AdminDPT
+  createur: Aurélien
+test51:
+  intitulé: Affecter des absences à un étudiant depuis la gestion des absences
+  operation: Selectionner la semaine concernée et cocher les cases correspondantes pour un étudiant
+  resultat: Le compteur d'absence de l'étudiant à été mis à jour
+  etat: *EtudiantCreated
+  page: *Scolarite
+  champs:
+  role: [*Secretaire, *Prof]
+  createur: Aurélien
+test52:
+  intitulé: Générer les absences pour une journée
+  operation: Généner le récapitulatif des absences
+  resultat: La page générée contient les absences préalablement créée
+  etat: *EtudiantCreated
+  page: *Absence
+  champs:
+  role: *Secretaire
+  createur: Aurélien
+test53:
+  intitulé: Créer une répartition
+  operation: Dans le menu modifier créer des groupes, rentrer le nom de la partition et clicker sur nouvelle partition
+  resultat: Le tableau contient une nouvelle ligne avec le nom de la partition préalablement rempli
+  etat: *ProgramCreated
+  page: *Notes
+  champs:
+  role: [*Secretaire, *AdminDPT]
+  createur: Aurélien
+test54:
+  intitulé: Créer un groupe
+  operation: Dans le menu modifier/créer des groupes, clicker sur répartir à coté de la partition concernée, remplir groupName et appuyer sur créer groupe
+  resultat: Le groupe apprait dans la div groups
+  etat: *EtudiantCreated
+  page: *Notes
+  champs:
+  role: [*Secretaire, *AdminDPT]
+  createur: Aurélien
+test55:
+  intitulé: Affecter des étudiants à un groupe
+  operation: Dans une répartition, déplacer des étudiants de étudiants sans groupe au groupe souhaité, enregister ces groupes
+  resultat: Le groupe (discretelink)  apparait maintenant sur la fiche des étudiants correspondant
+  etat: *EtudiantCreated
+  page: *Notes
+  champs:
+  role: *Secretaire
+  createur: Aurélien
+test60:
+  intitulé: Export XML de la formation
+  operation: Génération de l'export XML, vérifier s'il contient les informations de la formations
+  resultat: Le xml généré contient les informations demandées
+  etat: *ProgramCreated
+  page: *Notes
+  champs:
+  role: *AdminDPT
+  createur: Aurélien
+test61:
+  intitulé: Export JSON de la formation
+  operation: Génération de l'export JSON, vérifier s'il contient les informations de la formations
+  resultat: Le JSON généré contient les informations demandées
+  etat: *ProgramCreated
+  page: *Notes
+  champs:
+  role: *AdminDPT
+  createur: Aurélien

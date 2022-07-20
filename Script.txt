@@ -1,0 +1,15 @@
+Script 1 : Création de département
+    Nom du département InfoTest
+
+Script 2 : Création de la formation
+        Par soucis de simplicité, tu peux charger le JSON ci-joint (formation_export)
+Script 3 : Création des étudiants
+    Deux étudiants par semestre (semestre 1,2,3,4)
+    Nommage des étudiants : Nom de famille : SemestreX
+                            Prénom  : EtudiantNumeroX
+
+Script 4 : Création d'interrogation
+    Une interrogation nommé InterroTestSemestreX dans le premier module de chaque semestre
+
+Script 5 : Ajout des notes aux étudiants
+    1 étudiant par semestre avec une note de 12 à l'interrogation précédente, l'autre avec une note à 7
